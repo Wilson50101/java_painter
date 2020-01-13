@@ -19,7 +19,7 @@ import javax.swing.JPanel;
 
 public class Canvas extends JPanel {
 
-	PaintShape paintShape = new PaintShape();
+	//PaintShape paintShape = new PaintShape();
 
 	// Status bar
 	public final JLabel statusBar;
@@ -39,7 +39,19 @@ public class Canvas extends JPanel {
 
 	// Which Brush -> brushes = { "筆刷", "直線", "橢圓形", "矩形", "圓角矩形" };
 	private int shapeIndex = 0;
-
+	
+	private PaintBehavior paintbehavior=null;
+	
+	public Shape performPaint(int x1,int y1,int x2,int y2) 
+	{
+		return paintbehavior.paintShape(x1, y1, x2, y2);
+	}
+	
+	public void setPaintBehavior(PaintBehavior pb) 
+	{
+		paintbehavior=pb;
+	}
+	
 	// Shape size
 	private final int SMALL = 2;
 	private final int MEDIUM = 4;
@@ -137,7 +149,8 @@ public class Canvas extends JPanel {
 				Shape shapeToDraw = null;
 				int x = e.getX(), y = e.getY();
 				
-				shapeToDraw = paintShape.drawBrush(x, y, getShapeSize(), getShapeSize());
+				setPaintBehavior(new PaintBrush());
+				shapeToDraw = performPaint(x, y, getShapeSize(), getShapeSize());
 				
 				shapes.add(shapeToDraw);
 				shapeFill.add(getFgColor());
@@ -166,14 +179,15 @@ public class Canvas extends JPanel {
 				Shape shapeToDraw = null;
 				
 				if (getShapeIndex() == 1) {
-					shapeToDraw = paintShape.drawLine(drawStart.x, drawStart.y, e.getX(), e.getY());
+					setPaintBehavior(new PaintLine());
 				} else if (getShapeIndex() == 2) {
-					shapeToDraw = paintShape.drawElli(drawStart.x, drawStart.y, e.getX(), e.getY());
+					setPaintBehavior(new PaintElli());
 				} else if (getShapeIndex() == 3) {
-					shapeToDraw = paintShape.drawRect(drawStart.x, drawStart.y, e.getX(), e.getY());
+					setPaintBehavior(new PaintRect());
 				} else {
-					shapeToDraw = paintShape.drawRoundRect(drawStart.x, drawStart.y, e.getX(), e.getY());
+					setPaintBehavior(new PaintRoundRect());
 				}
+				shapeToDraw = performPaint(drawStart.x, drawStart.y, e.getX(), e.getY());
 				
 				shapes.add(shapeToDraw);
 				shapeFill.add(getFgColor());
