@@ -23,6 +23,9 @@ import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 
 public class PaintFrame extends JFrame {
+	
+	private PaintActionListener pal;
+	
 	// Main Canvas
 	private final Canvas canvas;
 
@@ -44,7 +47,7 @@ public class PaintFrame extends JFrame {
 	private ButtonGroup sizes; // Radio Button Group
 
 	// CheckBox x 1
-	private final JCheckBox isFill;
+	private  JCheckBox isFill;
 
 	// Button X 3
 	private final JButton fgColor;
@@ -122,46 +125,14 @@ public class PaintFrame extends JFrame {
 		// Button
 		fgColor = new JButton("前景色");
 		fgColor.setBackground(Canvas.fgColor);
-		fgColor.addActionListener(new ActionListener() {
+		fgColor.addActionListener(new JButtonActionListener(fgColor, canvas));
 
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				// TODO Auto-generated method stub
-				// JOptionPane.showMessageDialog(null, "你按了：" + fgColor.getText(), "訊息", JOptionPane.INFORMATION_MESSAGE);
-				Color sel = JColorChooser.showDialog(null, "Select Color", Color.BLACK);
-				Canvas.setFgColor(sel);
-				fgColor.setBackground(sel);
-				
-			}
-		});
 		bgColor = new JButton("背景色");
 		bgColor.setBackground(Canvas.bgColor);
-		bgColor.addActionListener(new ActionListener() {
+		bgColor.addActionListener(new JButtonActionListener(bgColor, canvas));
 
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				// TODO Auto-generated method stub
-				// JOptionPane.showMessageDialog(null, "你按了：" + bgColor.getText(), "訊息", JOptionPane.INFORMATION_MESSAGE);
-				Color sel = JColorChooser.showDialog(null, "Select Color", Color.WHITE);
-				Canvas.setBgColor(sel);
-				bgColor.setBackground(sel);
-				canvas.setNewBg();
-			}
-		});
 		empty = new JButton("清除畫面");
-		empty.addActionListener(new ActionListener() {
-
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				// TODO Auto-generated method stub
-				// Return 0 if select yes
-				int checkFill = JOptionPane.showConfirmDialog(null, "是否要" + empty.getText(), "訊息",
-						JOptionPane.YES_NO_OPTION);
-				if (checkFill == JOptionPane.YES_OPTION) {
-					canvas.clearCanvas();
-				}
-			}
-		});
+		empty.addActionListener(new JButtonActionListener(empty, canvas));
 
 		// Left Panel
 		toolPanel = new JPanel();
