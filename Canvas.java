@@ -19,8 +19,6 @@ import javax.swing.JPanel;
 
 public class Canvas extends JPanel {
 
-	//PaintShape paintShape = new PaintShape();
-
 	// Status bar
 	public final JLabel statusBar;
 	private String message;
@@ -39,8 +37,9 @@ public class Canvas extends JPanel {
 
 	// Which Brush -> brushes = { "筆刷", "直線", "橢圓形", "矩形", "圓角矩形" };
 	private int shapeIndex = 0;
-	
-	private PaintBehavior paintbehavior=null;
+	//建立pbarr存放繪圖工具的Behavior,以後有新增或更改,只要動這邊還有要跟UI顯示對上即可,不用再改其他地方
+	private PaintBehavior pbarr[]= {new PaintBrush(),new PaintLine(),new PaintElli(),new PaintRect(),new PaintRoundRect()};
+	private PaintBehavior paintbehavior=pbarr[0];
 	
 	public Shape performPaint(int x1,int y1,int x2,int y2) 
 	{
@@ -145,11 +144,12 @@ public class Canvas extends JPanel {
 			message = String.format("游標位置： (%d,%d)", e.getX(), e.getY());
 			statusBar.setText(message);
 			
-			if (getShapeIndex() == 0) {
+			//如果是筆刷拖曳,則拖曳過程都要留下痕跡
+			if (getShapeIndex() == 0) 
+			{
 				Shape shapeToDraw = null;
 				int x = e.getX(), y = e.getY();
-				
-				setPaintBehavior(new PaintBrush());
+
 				shapeToDraw = performPaint(x, y, getShapeSize(), getShapeSize());
 				
 				shapes.add(shapeToDraw);
@@ -158,7 +158,7 @@ public class Canvas extends JPanel {
 				shapeIsFill.add(fill);
 				whichShape.add(getShapeIndex());
 				
-			}
+			 } 
 			
 			drawEnd = new Point(e.getX(), e.getY());
 			repaint(); // repaint JFrame
@@ -178,15 +178,6 @@ public class Canvas extends JPanel {
 			if (getShapeIndex() != 0) {
 				Shape shapeToDraw = null;
 				
-				if (getShapeIndex() == 1) {
-					setPaintBehavior(new PaintLine());
-				} else if (getShapeIndex() == 2) {
-					setPaintBehavior(new PaintElli());
-				} else if (getShapeIndex() == 3) {
-					setPaintBehavior(new PaintRect());
-				} else {
-					setPaintBehavior(new PaintRoundRect());
-				}
 				shapeToDraw = performPaint(drawStart.x, drawStart.y, e.getX(), e.getY());
 				
 				shapes.add(shapeToDraw);
@@ -207,6 +198,8 @@ public class Canvas extends JPanel {
 
 	public void setShapeIndex(int shapeIndex) {
 		this.shapeIndex = shapeIndex;
+		//每次有人設定shapeIndex的時候就順便處理PaintBehavior的更動
+		setPaintBehavior(pbarr[this.shapeIndex]);
 	}
 
 	public boolean getFill() {
